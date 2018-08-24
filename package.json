@@ -1,0 +1,46 @@
+{
+  "name": "snsoft-kl-food-order",
+  "version": "1.0.0",
+  "author": "Yuho",
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ],
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --port 9090 --hot --mode development --config webpack.dev.config.js",
+    "start": "webpack --mode production",
+    "build": "webpack --mode production --progress",
+    "heroku-postbuild": "webpack --mode production"
+  },
+  "dependencies": {
+    "js-cookie": "^2.2.0",
+    "jwt-decode": "^2.2.0",
+    "query-string": "^6.1.0",
+    "react": "^16.4.1",
+    "react-bootstrap": "^0.32.3",
+    "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^1.0.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
+  }
+}
