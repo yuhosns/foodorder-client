@@ -14,8 +14,8 @@
   "scripts": {
     "dev": "webpack-dev-server --port 9090 --hot --mode development --config webpack.dev.config.js",
     "start": "node ./build-server/src/server.js",
-    "build": "webpack --mode production --progress",
-    "heroku-postbuild": "webpack --mode production"
+    "build": "rm -rf ./build; webpack --mode production; rm -rf ./build-server; babel . --out-dir build-server --ignore node_modules",
+    "heroku-postbuild": "webpack --mode production; rm -rf ./build-server; babel ./src/server.js --out-dir build-server --ignore node_modules",
   },
   "dependencies": {
     "js-cookie": "^2.2.0",
