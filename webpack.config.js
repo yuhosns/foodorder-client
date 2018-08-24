@@ -2,8 +2,6 @@ const webpack = require("webpack")
 const path = require("path")
 const HtmlWebPackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const CleanWebpackPlugin = require("clean-webpack-plugin")
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const BUILD_DIR = path.resolve(__dirname, "build")
 const APP_DIR = path.resolve(__dirname, "src")
@@ -49,15 +47,6 @@ module.exports = {
     extensions: [".js", ".json", ".jsx"],
   },
   optimization: {
-    minimizer:    [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          output: {
-            comments: false,
-          },
-        },
-      }),
-    ],
     splitChunks:  {
       cacheGroups: {
         vendor: {
@@ -85,6 +74,5 @@ module.exports = {
         API_HOST: JSON.stringify(process.env.API_HOST || "http://localhost:8080/v1"),
       },
     }),
-    new CleanWebpackPlugin(BUILD_DIR),
   ],
 }
