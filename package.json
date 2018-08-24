@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --port 9090 --hot --mode development --config webpack.dev.config.js",
-    "start": "webpack --mode production",
+    "start": "node ./build-server/src/server.js",
     "build": "webpack --mode production --progress",
     "heroku-postbuild": "webpack --mode production"
   },
