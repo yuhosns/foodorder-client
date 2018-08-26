@@ -7,32 +7,38 @@ export default class BossOnlyPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      message: "You are not allow to view this secret message",
+      message: "checking authentication...",
     }
   }
 
   async fetchData() {
+    this.mounted = true
     try {
       const message = await DataSource.shared.getBossMessage()
-      console.log(message)
-      this.setState({
-        message,
-      })
+      if (this.mounted) {
+        this.setState({
+          message,
+        })
+      }
     } catch (err) {
       this.setState({
         err: err.type,
+        message: "You are not allow to view this secret message",
       })
     }
   }
 
   async componentDidMount() {
     await this.fetchData()
-    console.log("wei")
+  }
+
+  componentWillUnmount() {
+    this.mounted = false
   }
 
   render() {
     const { message, err } = this.state
-    console.log(message)
+
     return (
       <BasePage>
         <AlertMessage errorMessage={err}/>

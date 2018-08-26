@@ -12,11 +12,15 @@ export default class ProfilePage extends React.Component {
   }
 
   async fetchData() {
+    this.mounted = true
+
     try {
       const profile = await DataSource.shared.getProfile()
-      this.setState({
-        profile,
-      })
+      if (this.mounted) {
+        this.setState({
+          profile,
+        })
+      }
     } catch (err) {
       this.setState({
         err: err.type,
@@ -26,6 +30,10 @@ export default class ProfilePage extends React.Component {
 
   async componentDidMount() {
     await this.fetchData()
+  }
+
+  componentWillUnmount() {
+    this.mounted = false
   }
 
   render() {

@@ -1,4 +1,6 @@
 import React from "react"
+import { Redirect } from "react-router-dom"
+import { Button } from "react-bootstrap"
 import DataSource from "../data/datasource"
 import FormInput from "../components/FormInput"
 import BasePage from "./BasePage"
@@ -8,28 +10,24 @@ export default class SignUpPage extends React.Component {
   constructor() {
     super()
     this.state = {
-      name:             "",
       username:         "",
       password:         "",
       confirmPassword:  "",
+      isLoading:        false,
       validationsError: [],
     }
     this.handleSignUp = this.handleSignUp.bind(this)
     this.handleInputChanged = this.handleInputChanged.bind(this)
   }
 
-  componentDidMount(){
-    if (DataSource.shared.isLoggedIn) {
-      window.location.replace("/")
-    }
-  }
-
   render() {
-    console.log("render component Login ")
-    const { errorMessage, name, username, password, confirmPassword, validationsError } = this.state
+    if (DataSource.shared.isLoggedIn) {
+      return <Redirect to='/'/>
+    }
+    const { errorMessage, username, password, confirmPassword, isLoading, validationsError } = this.state
 
     return (
-      <BasePage>
+      <BasePage isLoading={isLoading}>
         <AlertMessage errorMessage={errorMessage}/>
         <form>
           <FormInput
@@ -63,7 +61,7 @@ export default class SignUpPage extends React.Component {
           />
           */}
 
-          <button type="submit" onClick={this.handleSignUp}>SignUp</button>
+          <Button type="submit" onClick={this.handleSignUp} disabled={isLoading}>SignUp</Button>
         </form>
       </BasePage>
     )
@@ -95,20 +93,29 @@ export default class SignUpPage extends React.Component {
   async handleSignUp(e) {
     e.preventDefault()
     const { username, password, confirmPassword } = this.state
-    try {
-      await DataSource.shared.signup(username, password, confirmPassword)
-      await DataSource.shared.login(username, password)
-      window.location.replace("/")
-    } catch (err) {
-      if (err.type === "validation_failed") {
-        this.parseValidationError(err.validationErrors)
-      } else {
+
+    this.setState({
+      isLoading: true,
+    }, async () => {
+      try {
+        await DataSource.shared.signup(username, password, confirmPassword)
+        await DataSource.shared.login(username, password)
         this.setState({
-          errorMessage: err.type || err.message,
-          isSubmitting: false,
+          isLoading: false,
         })
+        window.location.replace("/")
+      } catch (err) {
+        if (err.type === "validation_failed") {
+          this.parseValidationError(err.validationErrors)
+        } else {
+          this.setState({
+            errorMessage: err.type || err.message,
+            isLoading:    false,
+          })
+        }
       }
-    }
+    })
+
   }
 
   parseValidationError(validationErrors) {

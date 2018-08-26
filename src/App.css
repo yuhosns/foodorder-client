@@ -1,0 +1,15 @@
+.loading-hint{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+    font-size: 40px;
+    text-align: center;
+}

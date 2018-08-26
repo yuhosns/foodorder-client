@@ -59,8 +59,7 @@ export default class FoodRequestPage extends React.Component {
           <FormInput
             id="totalAmount"
             label="totalAmount"
-            type={"number"}
-            placeholder={"amount (number only)"}
+            placeholder={"etc 6.5, no RM require"}
             onChange={(e) => this.handleChange(e)}
           />
 

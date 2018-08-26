@@ -17,7 +17,7 @@ export default class DataSource {
     if (DataSource.instance == null || DataSource.instance === undefined) {
       DataSource.instance = new DataSource()
       let token = Cookies.get("token")
-      if (token !== undefined) {
+      if (token !== undefined && token !== "null") {
         try {
           DataSource.instance._claims = JWTDecode(token)
           DataSource.instance.token = token
@@ -58,10 +58,9 @@ export default class DataSource {
     return json
   }
 
-
   async signup(username, password, confirmPassword) {
     // Build request
-    const url = URLForEndpoint(`user/add`,)
+    const url = URLForEndpoint(`user/add`)
     const request = NewRequest("POST")
     request.body = JSON.stringify({
       username,
@@ -80,7 +79,6 @@ export default class DataSource {
     // Handle errors and return response
     return await this.parseResponseAndHandleErrors(response)
   }
-
 
   async login(username, password) {
     // Build request
@@ -165,7 +163,6 @@ export default class DataSource {
     return await this.parseResponseAndHandleErrors(response)
   }
 
-
   async getBossMessage() {
     // Build request
     const url = URLForEndpoint("boss")
@@ -224,7 +221,5 @@ export default class DataSource {
     // Handle errors and return response
     return await this.parseResponseAndHandleErrors(response)
   }
-
-
 
 }

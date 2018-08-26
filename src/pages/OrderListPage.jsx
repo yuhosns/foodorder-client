@@ -1,57 +1,90 @@
 import React from "react"
 import { Row, Col } from "react-bootstrap"
 import DataSource from "../data/datasource"
+import AlertMessage from "../components/AlertMessage"
 
 export default class OrderListPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      orderList: null,
+      allOrders:    null,
+      errorMessage: null,
     }
   }
 
   async fetchData() {
-    const orderList = await DataSource.shared.getOrders()
-    this.setState({
-      orderList,
-    })
+    this.mounted = true
+    try {
+      const allOrders = await DataSource.shared.getOrders()
+      if (this.mounted) {
+        this.setState({
+          allOrders,
+        })
+      }
+    } catch (errorMessage) {
+      this.setState({
+        errorMessage: errorMessage.type || errorMessage.message,
+      })
+    }
+
   }
 
   async componentDidMount() {
     await this.fetchData()
   }
 
+  async componentWillReceiveProps(newProps) {
+    console.log(newProps)
+    await this.fetchData()
+  }
+
+  componentWillUnmount() {
+    this.mounted = false
+  }
+
   render() {
-    const { orderList } = this.state
-    if (!orderList) return null
-    const { orders, totalToPay } = orderList
-    const ordersNode = orders.map(order => {
-      return (
-        <Col sm={3}>
-          <div key={order._id} style={{ marginBottom: 20, border: "1px solid #8e8e8e", padding: 10 }}>
-            <div>
-              name: <b>{order.name}</b>
+    const { allOrders, errorMessage } = this.state
+    if (!allOrders || allOrders.length === 0) return <p>No orders history</p>
+
+    let totalToPayNode = null
+    let orderDateNode = null
+    const ordersNode = allOrders.map(orderByDate => {
+
+      const { orders, totalToPay, _id } = orderByDate
+      totalToPayNode = totalToPay
+      orderDateNode = _id
+      console.log(orderByDate)
+
+      return orders.map(order => {
+        return (
+          <Col sm={3} key={order._id}>
+            <div style={{ marginBottom: 20, border: "1px solid #8e8e8e", padding: 10 }}>
+              <div>
+                name: <b>{order.name}</b>
+              </div>
+              <div>
+                foodNumbers: <b>{order.foodNumbers}</b>
+              </div>
+              <div>
+                amount: <b>RM{order.totalAmount}</b>
+              </div>
             </div>
-            <div>
-              foodNumbers: <b>{order.foodNumbers}</b>
-            </div>
-            <div>
-              amount: <b>RM{order.totalAmount}</b>
-            </div>
-          </div>
-        </Col>
-      )
+          </Col>
+        )
+      })
     })
 
     return (
       <div>
+        <AlertMessage errorMessage={errorMessage}/>
         <h3>Food Ordered List</h3>
         <Row>
           {ordersNode}
         </Row>
         <div>
+          {orderDateNode}
           <h4>
-            Total to pay: <b>{totalToPay}</b>
+            Total to pay: <b>{totalToPayNode}</b>
           </h4>
         </div>
       </div>

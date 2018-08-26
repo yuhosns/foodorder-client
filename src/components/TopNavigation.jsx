@@ -1,4 +1,6 @@
 import React from "react"
+import { Link } from "react-router-dom"
+import { LinkContainer } from "react-router-bootstrap"
 import { Grid, Navbar, Nav, NavItem, Row, Col } from "react-bootstrap"
 import UserInfo from "./UserInfo"
 import DataSource from "../data/datasource"
@@ -32,30 +34,49 @@ export default class TopNavigation extends React.Component {
       )
     }
 
+    let loginNav = (
+      <React.Fragment>
+        <LinkContainer to="/login">
+          <NavItem eventKey={1}>
+            Login
+          </NavItem>
+        </LinkContainer>
+        <LinkContainer to="/signup">
+          <NavItem eventKey={2}>
+            Sign Up
+          </NavItem>
+        </LinkContainer>
+      </React.Fragment>
+    )
+    if (DataSource.shared.isLoggedIn) {
+      loginNav = null
+    }
+
     return (
       <div>
         <Navbar>
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="/">Food Order</a>
+              <Link to="/">Food Order</Link>
             </Navbar.Brand>
           </Navbar.Header>
           <Nav>
-            <NavItem eventKey={1} href="/login">
-              Login
-            </NavItem>
-            <NavItem eventKey={2} href="/signup">
-              Sign Up
-            </NavItem>
-            <NavItem eventKey={3} href="/profile">
-              My Profile
-            </NavItem>
-            <NavItem eventKey={4} href="/users">
-              User List
-            </NavItem>
-            <NavItem eventKey={4} href="/boss-only">
-              Boss Only
-            </NavItem>
+            {loginNav}
+            <LinkContainer to="/profile">
+              <NavItem eventKey={3}>
+                Profile
+              </NavItem>
+            </LinkContainer>
+            <LinkContainer to="/users">
+              <NavItem eventKey={4}>
+                User List
+              </NavItem>
+            </LinkContainer>
+            <LinkContainer to="/boss-only">
+              <NavItem eventKey={4}>
+                Boss Only
+              </NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar>
 

@@ -5,24 +5,28 @@ export default class UserInfo extends React.Component {
   constructor() {
     super()
     this.state = {
-      username: null,
-      role:     null,
+      userName: null,
+      userRole: null,
     }
     this.handleLogoutClick = this.handleLogoutClick.bind(this)
   }
 
   async fetchProfile() {
     try {
-      const { username, role, _id } = await DataSource.shared.getProfile()
+      const { userName, userRole, userID } = await DataSource.shared.claims
 
       this.setState({
-        username,
-        role,
-        _id,
+        userName,
+        userRole,
+        userID,
       })
 
     } catch (error) {
-      console.log("failt to login")
+      console.log(error)
+      console.log("failed to login")
+      if (error.type === "token_invalid") {
+        DataSource.shared.logout()
+      }
       this.setState({
         errorMessage: error.message || error.type,
       })
@@ -34,7 +38,7 @@ export default class UserInfo extends React.Component {
   }
 
   render() {
-    const { username, role, _id } = this.state
+    const { userName, userRole, userID } = this.state
 
     if (!DataSource.shared.isLoggedIn) {
       return null
@@ -44,10 +48,10 @@ export default class UserInfo extends React.Component {
 
     return (
       <div style={{ marginBottom: 10 }}>
-        Hello, <b>{username}</b><br/>
-        ID: <b>{_id}</b>
+        Hello, <b>{userName}</b><br/>
+        ID: <b>{userID}</b>
         <div>
-          Your Role: <b>{role}</b>
+          Role: <b>{userRole}</b>
         </div>
         <button onClick={this.handleLogoutClick}>Log Out</button>
       </div>

@@ -11,36 +11,48 @@ export default class UsersPage extends React.Component {
   }
 
   async fetchData() {
+    this.mounted = true
+
     const users = await DataSource.shared.getUsers()
-    this.setState({
-      users,
-    })
+    if (this.mounted) {
+      this.setState({
+        users,
+      })
+    }
   }
 
   async componentDidMount() {
     await this.fetchData()
   }
 
+  componentWillUnmount() {
+    this.mounted = false
+  }
+
   render() {
     const { users } = this.state
-    if (!users) return null
 
-    const usersNode = users.map(user => {
-      return (
-        <div key={user._id} style={{ marginBottom: 20, border: "1px solid #eee", padding: 10 }}>
-          <div>
-            <b>id</b>: {user._id}
+    let userListNode = null
+    if (!users) {
+      userListNode = <p>Loading</p>
+    } else {
+      userListNode = users.map(user => {
+        return (
+          <div key={user._id} style={{ marginBottom: 20, border: "1px solid #eee", padding: 10 }}>
+            <div>
+              <b>id</b>: {user._id}
+            </div>
+            <div>
+              <b>name</b>: {user.username}
+            </div>
           </div>
-          <div>
-            <b>name</b>: {user.username}
-          </div>
-        </div>
-      )
-    })
+        )
+      })
+    }
 
     return (
       <BasePage>
-        {usersNode}
+        {userListNode}
       </BasePage>
     )
   }
