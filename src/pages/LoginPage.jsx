@@ -85,29 +85,10 @@ export default class LoginPage extends React.Component {
           isLoading: false,
         })
       } catch (err) {
-        if (err.type === "validation_failed") {
-          this.parseValidationError(err.validationErrors)
-        } else {
-          this.setState({
-            errorMessage: err.type,
-            isLoading:    false,
-          })
-        }
-      }
-    })
-  }
-
-  parseValidationError(validationErrors) {
-    const { validationsError } = this.state
-
-    validationErrors.forEach((validationError) => {
-      switch (validationError.field) {
-        case "username" :
-          validationsError.username = validationError.type
-          break
-        case "password" :
-          validationsError.password = validationError.type
-          break
+        this.setState({
+          errorMessage: err.type || err.message,
+          isLoading:    false,
+        })
       }
     })
   }
