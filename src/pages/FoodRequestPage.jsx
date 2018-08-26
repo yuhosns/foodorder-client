@@ -1,18 +1,19 @@
 import React from "react"
 import DataSource from "../data/datasource"
-import BasePage from "./BasePage"
 import FormInput from "../components/FormInput"
+import moment from "moment"
+import AlertMessage from "../components/AlertMessage"
 
 export default class FoodRequestPage extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      vendor:      "",
-      name:        "",
-      foodNumbers: "",
-      totalAmount: "",
-      submitted:   false,
-      submitting:  false,
+      vendor:       "",
+      name:         "",
+      foodNumbers:  "",
+      totalAmount:  "",
+      errorMessage: false,
+      submitting:   false,
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -28,9 +29,11 @@ export default class FoodRequestPage extends React.Component {
   }
 
   render() {
+    const { errorMessage, submitting } = this.state
     const userName = DataSource.shared.claims.userName
     return (
       <div className={"form-wrap"}>
+        <AlertMessage errorMessage={errorMessage}/>
         <h3>Food Order Form</h3>
         <form onSubmit={(e) => this.handleSubmit(e)}>
 
@@ -63,7 +66,7 @@ export default class FoodRequestPage extends React.Component {
             onChange={(e) => this.handleChange(e)}
           />
 
-          <button type="submit" disabled={this.state.submitting}>Submit</button>
+          <button type="submit" disabled={submitting}>Submit</button>
         </form>
       </div>
     )
@@ -80,17 +83,19 @@ export default class FoodRequestPage extends React.Component {
   async handleSubmit(e) {
     e.preventDefault()
     this.setState({
-      submitting: true,
+      submitting:   true,
+      errorMessage: null,
     }, async () => {
       try {
-        const response = await DataSource.shared.postOrder(this.state)
+        await DataSource.shared.postOrder(this.state)
         this.setState({
-          submitted:  true,
           submitting: false,
         })
+        this.props.onOrdersChange()
       } catch (err) {
         this.setState({
-          submitting: false,
+          submitting:   false,
+          errorMessage: err.type || err.message,
         })
         console.log(err)
       }

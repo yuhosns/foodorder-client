@@ -3,10 +3,20 @@ import DataSource from "../data/datasource"
 import BasePage from "./BasePage"
 import LoginPage from "./LoginPage"
 import FoodRequestPage from "./FoodRequestPage"
-import OrderListPage from "./OrderListPage"
+import OrderListPage from "./OrderListPage/OrderListPage"
 
 export default class HomePage extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      ordersChange: false,
+    }
+    this.handleOrdersChange = this.handleOrdersChange.bind(this)
+  }
+
   render() {
+    const { ordersChange } = this.state
+
     let content
     if (!DataSource.shared.isLoggedIn) {
       content = (
@@ -16,18 +26,22 @@ export default class HomePage extends React.Component {
         </div>
       )
     } else {
-      content = <FoodRequestPage/>
+      content = <FoodRequestPage onOrdersChange={this.handleOrdersChange}/>
     }
 
     return (
       <BasePage>
-        <OrderListPage/>
+        <OrderListPage ordersChange={ordersChange}/>
         <hr/>
         {content}
       </BasePage>
     )
   }
 
-  //
+  handleOrdersChange() {
+    this.setState({
+      ordersChange: !this.state.ordersChange,
+    })
+  }
 
 }

@@ -12,6 +12,11 @@ const ERROR_SERVER_UNREACHABLE = {
   message: "Couldn't contact the server. Please check your internet connection and try again.",
 }
 
+const ERROR_ACCESS_DENIED = {
+  type:    "unauthorized",
+  message: "Access is denied",
+}
+
 export default class DataSource {
   static get shared() {
     if (DataSource.instance == null || DataSource.instance === undefined) {
@@ -56,6 +61,34 @@ export default class DataSource {
     }
 
     return json
+  }
+
+  async handleErrors(response) {
+    // Check if unauthorized
+    if (response.status === "401") {
+      // Log out
+      this.logout()
+      throw ERROR_ACCESS_DENIED
+    }
+
+    // If not successful, throw response
+    let responseStatusNumber = Number(response.status)
+    if (responseStatusNumber >= 400 && responseStatusNumber <= 599) {
+      let json
+      try {
+        json = await response.json()
+      } catch (err) {
+        // do nothing
+      }
+
+      if (json === null || json === undefined) {
+        throw response
+      } else {
+        throw json
+      }
+    }
+
+    return response
   }
 
   async signup(username, password, confirmPassword) {
@@ -220,6 +253,28 @@ export default class DataSource {
 
     // Handle errors and return response
     return await this.parseResponseAndHandleErrors(response)
+  }
+
+  async deleteRequest(requestOrder) {
+    console.log(requestOrder)
+    // Build request
+    const url = URLForEndpoint(`request/${requestOrder._id}`)
+    const request = NewRequest("DELETE", this.token)
+    request.body = JSON.stringify({
+      totalAmount: requestOrder.totalAmount / 100, //TODO: do at backend
+      orderID:     requestOrder.order_id,
+    })
+
+    // Fetch
+    let response
+    try {
+      response = await fetch(url, request)
+    } catch (err) {
+      throw ERROR_SERVER_UNREACHABLE
+    }
+
+    // Handle errors and return response
+    return await this.handleErrors(response)
   }
 
 }
