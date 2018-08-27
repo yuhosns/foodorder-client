@@ -1,4 +1,5 @@
 import React from "react"
+import { Table } from "react-bootstrap"
 import DataSource from "../data/datasource"
 import BasePage from "./BasePage"
 
@@ -38,21 +39,35 @@ export default class UsersPage extends React.Component {
     } else {
       userListNode = users.map(user => {
         return (
-          <div key={user._id} style={{ marginBottom: 20, border: "1px solid #eee", padding: 10 }}>
-            <div>
-              <b>id</b>: {user._id}
-            </div>
-            <div>
-              <b>name</b>: {user.username}
-            </div>
-          </div>
+          <tr key={user._id}>
+            <td>
+              {user._id}
+            </td>
+            <td>
+              {user.username}
+            </td>
+            <td>
+              {user.role}
+            </td>
+          </tr>
         )
       })
     }
 
     return (
       <BasePage>
-        {userListNode}
+        <Table striped bordered condensed hover>
+          <thead>
+          <tr>
+            <th width="30%">ID</th>
+            <th width="50%">Name</th>
+            <th width="20%">Role</th>
+          </tr>
+          </thead>
+          <tbody>
+          {userListNode}
+          </tbody>
+        </Table>
       </BasePage>
     )
   }
