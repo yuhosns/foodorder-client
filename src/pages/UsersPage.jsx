@@ -35,7 +35,12 @@ export default class UsersPage extends React.Component {
 
     let userListNode = null
     if (!users) {
-      userListNode = <p>Loading</p>
+      userListNode = (
+        <tr>
+          <td colSpan="3">Loading</td>
+        </tr>
+      )
+      
     } else {
       userListNode = users.map(user => {
         return (
