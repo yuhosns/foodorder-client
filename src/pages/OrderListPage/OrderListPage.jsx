@@ -25,7 +25,6 @@ export default class OrderListPage extends React.Component {
     this.mounted = true
     try {
       const ordersHistory = await DataSource.shared.getOrders()
-      console.log(ordersHistory)
       if (this.mounted) {
         this.setState({
           ordersHistory,
@@ -54,8 +53,8 @@ export default class OrderListPage extends React.Component {
 
   render() {
     const { ordersHistory, errorMessage, infoMessage, showSummary } = this.state
-    if (!ordersHistory || ordersHistory.length === 0) return <p>No orders history</p>
-
+    if (!ordersHistory) return <p>Loading order history</p>
+    if (ordersHistory && ordersHistory.length === 0) return <p>No orders history</p>
     const lastOrderDate = ordersHistory[0].date
     const lastDate = moment(lastOrderDate).format("DD MMM YYYY")
     const today = moment(new Date()).format("DD MMM YYYY")
