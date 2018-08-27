@@ -1,10 +1,11 @@
 import React from "react"
-import { Row, Col, Tabs, Tab } from "react-bootstrap"
+import { Row, Col, Tabs, Tab, Modal, Button } from "react-bootstrap"
 import DataSource from "../../data/datasource"
 import AlertMessage from "../../components/AlertMessage"
 import moment from "moment"
-import OrderHistoryItem from "./OrderHistoryItem"
 import "./OrderListPage.css"
+import OrderSummary from "../../components/OrderSummary"
+import OrderList from "./OrderList"
 
 export default class OrderListPage extends React.Component {
   constructor(props) {
@@ -13,14 +14,18 @@ export default class OrderListPage extends React.Component {
       ordersHistory: null,
       errorMessage:  null,
       infoMessage:   null,
+      showSummary:   false,
     }
     this.handleRequestDelete = this.handleRequestDelete.bind(this)
+    this.handleModalShow = this.handleModalShow.bind(this)
+    this.handleModalClose = this.handleModalClose.bind(this)
   }
 
   async fetchData() {
     this.mounted = true
     try {
       const ordersHistory = await DataSource.shared.getOrders()
+      console.log(ordersHistory)
       if (this.mounted) {
         this.setState({
           ordersHistory,
@@ -48,16 +53,14 @@ export default class OrderListPage extends React.Component {
   }
 
   render() {
-    const { ordersHistory, errorMessage, infoMessage } = this.state
+    const { ordersHistory, errorMessage, infoMessage, showSummary } = this.state
     if (!ordersHistory || ordersHistory.length === 0) return <p>No orders history</p>
 
-    console.log(ordersHistory)
     const lastOrderDate = ordersHistory[0].date
     const lastDate = moment(lastOrderDate).format("DD MMM YYYY")
     const today = moment(new Date()).format("DD MMM YYYY")
 
-    console.log(lastDate, " ", today)
-
+    // No Food request today hint
     let noOrderTodayHint = null
     if (lastDate !== today) {
       noOrderTodayHint = (
@@ -68,30 +71,32 @@ export default class OrderListPage extends React.Component {
       )
     }
 
+    // order list
     const ordersNode = ordersHistory.map((orderHistory, index) => {
       const { orders, totalToPay, _id, date } = orderHistory
 
+      // tab title
       let tabTitle = _id
       if (date) {
         tabTitle = moment(date).format("DD MMM YYYY")
       }
 
+      // summary button
+      let summaryButton = null
+      if (today === tabTitle) {
+        summaryButton = (
+          <Button bsStyle="primary" onClick={this.handleModalShow}>
+            View Summary
+          </Button>
+        )
+      }
+
       return (
         <Tab eventKey={index} title={tabTitle} key={_id}>
-          <Row>
-            {
-              orders.map(order => {
-                return (
-                  <OrderHistoryItem order={order} key={order._id} onRequestDelete={this.handleRequestDelete}/>
-                )
-              })
-            }
-          </Row>
-          <div>
-            <h4>
-              Total to pay: <b>{totalToPay}</b>
-            </h4>
-          </div>
+          <OrderList orders={orders}
+                     totalToPay={totalToPay}
+                     summaryButton={summaryButton}
+                     onRequestDelete={this.handleRequestDelete}/>
         </Tab>
       )
     })
@@ -104,12 +109,19 @@ export default class OrderListPage extends React.Component {
         <Tabs defaultActiveKey={0} id="orders-history">
           {ordersNode}
         </Tabs>
+        <Modal show={showSummary === true} onHide={this.handleModalClose}>
+          <Modal.Body>
+            {ordersHistory && <OrderSummary orders={ordersHistory[0].orders}
+                                            totalToPay={ordersHistory[0].totalToPay}
+                                            date={ordersHistory[0].date}/>}
+          </Modal.Body>
+        </Modal>
       </div>
     )
   }
 
+  // handler
   async handleRequestDelete(requestOrder) {
-    console.log(requestOrder)
     try {
       await DataSource.shared.deleteRequest(requestOrder)
       this.setState({
@@ -128,4 +140,17 @@ export default class OrderListPage extends React.Component {
       })
     }
   }
+
+  handleModalShow() {
+    this.setState({
+      showSummary: true,
+    })
+  }
+
+  handleModalClose() {
+    this.setState({
+      showSummary: false,
+    })
+  }
+
 }

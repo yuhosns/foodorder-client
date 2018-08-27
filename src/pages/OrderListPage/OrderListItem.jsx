@@ -1,7 +1,7 @@
 import { Col, Button } from "react-bootstrap"
 import React from "react"
 
-export default class OrderHistoryItem extends React.Component {
+export default class OrderListItem extends React.Component {
   render() {
     const { order, onRequestDelete } = this.props
     const totalAmount = order.totalAmount / 100 //TODO: do at backend

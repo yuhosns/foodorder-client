@@ -3,14 +3,13 @@ import path from "path"
 import express from "express"
 import serveStatic from "serve-static"
 
-const NODE_ENV = process.env.NODE_ENV
 const PORT = process.env.PORT || 9090
 
 const app = express()
 
 app
   // serve static files
-  .get(["/css/*", "/js/*", "/images/*", "/credits/*", "/directions/*", "/email/*", "/how-it-work/*", "/promotion/*"], (req, res) => {
+  .get(["/css/*", "/js/*", "/images/*"], (req, res) => {
     const fileName = path.join(__dirname, "../../build", req.originalUrl.split("?")[0])
     fs.readFile(fileName, "utf8", (err, file) => {
       if (err) {

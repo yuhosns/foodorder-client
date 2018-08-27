@@ -1,7 +1,6 @@
 import React from "react"
 import DataSource from "../data/datasource"
 import FormInput from "../components/FormInput"
-import moment from "moment"
 import AlertMessage from "../components/AlertMessage"
 
 export default class FoodRequestPage extends React.Component {

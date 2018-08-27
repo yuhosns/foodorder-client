@@ -44,8 +44,6 @@ export default class UserInfo extends React.Component {
       return null
     }
 
-    console.log("render Profile widget")
-
     return (
       <div style={{ marginBottom: 10 }}>
         Hello, <b>{userName}</b><br/>
