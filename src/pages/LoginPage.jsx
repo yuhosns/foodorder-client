@@ -1,5 +1,5 @@
 import React from "react"
-import { Redirect } from "react-router-dom"
+import { Redirect, Link } from "react-router-dom"
 import { Button } from "react-bootstrap"
 import DataSource from "../data/datasource"
 import FormInput from "../components/FormInput"
@@ -50,6 +50,7 @@ export default class LoginPage extends React.Component {
             onChange={this.handleInputChanged}
           />
           <Button type="submit" onClick={this.handleLogin} disabled={isLoading}>Login</Button>
+          <span style={{ marginLeft: 5 }}>or <Link to={"signup"}>Signup</Link></span>
         </form>
       </BasePage>
     )
